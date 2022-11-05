@@ -1,7 +1,6 @@
-import * as React from 'react'
+import React from 'react'
 import axios, { AxiosResponse } from 'axios'
 import { Activity } from '../models/activity'
-import { request } from 'http'
 
 const sleep = (delay: number) => {
   return new Promise((resolve) => {
