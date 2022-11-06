@@ -1,17 +1,12 @@
 import React from 'react'
-import { observer } from 'mobx-react-lite'
+import { NavLink } from 'react-router-dom'
 import { Button, Container, Menu } from 'semantic-ui-react'
-import { useStore } from '../stores/store'
 
-export default observer(function NavBar() {
-  const { activityStore } = useStore()
-
-  const { openForm } = activityStore
-
+export default function NavBar() {
   return (
     <Menu inverted fixed="top">
       <Container>
-        <Menu.Item header>
+        <Menu.Item as={NavLink} to="/" exact header>
           <img
             src="/assets/logo.png"
             alt="logo"
@@ -19,10 +14,11 @@ export default observer(function NavBar() {
           />
           Reactivities
         </Menu.Item>
-        <Menu.Item name="Activities" />
+        <Menu.Item as={NavLink} to="/activities" name="Activities" />
         <Menu.Item>
           <Button
-            onClick={() => openForm()}
+            as={NavLink}
+            to="/createActivity"
             positive
             content="Create Activity"
           />
@@ -30,4 +26,4 @@ export default observer(function NavBar() {
       </Container>
     </Menu>
   )
-})
+}
