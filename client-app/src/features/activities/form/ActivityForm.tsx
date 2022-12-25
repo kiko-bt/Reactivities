@@ -3,7 +3,7 @@ import { observer } from 'mobx-react-lite'
 import { useState } from 'react'
 import { Button, Header, Segment } from 'semantic-ui-react'
 import { useStore } from './../../../app/stores/store'
-import { Link, useHistory, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import LoadingComponent from '../../../app/layout/LoadingComponent'
 import { v4 as uuidv4 } from 'uuid'
 import { categoryOptions } from '../../../app/common/options/categoryOptions'
@@ -16,7 +16,7 @@ import MySelectInput from '../../../app/common/form/MySelectInput'
 import MyDateInput from './../../../app/common/form/MyDateInput'
 
 export default observer(function ActivityForm() {
-  const history = useHistory()
+  const navigate = useNavigate()
   const { activityStore } = useStore()
   const {
     loading,
@@ -54,11 +54,11 @@ export default observer(function ActivityForm() {
         id: uuidv4(),
       }
       createActivity(newActivity).then(() =>
-        history.push(`/activities/${newActivity.id}`)
+        navigate(`/activities/${newActivity.id}`)
       )
     } else {
       updateActivity(activity).then(() =>
-        history.push(`/activities/${activity.id}`)
+        navigate(`/activities/${activity.id}`)
       )
     }
   }
