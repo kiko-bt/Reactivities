@@ -1,4 +1,5 @@
-﻿using Application.Profiles;
+﻿using Application.Comments;
+using Application.Profiles;
 
 namespace Application.Activities
 {

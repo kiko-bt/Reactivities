@@ -1,3 +1,4 @@
+using API.SignalR;
 using Domain;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +12,9 @@ namespace API
         {
             var host = CreateHostBuilder(args).Build();
             using var scope = host.Services.CreateScope();
+
+            var builder = WebApplication.CreateBuilder(args);
+            var app = builder.Build();
 
             var services = scope.ServiceProvider;
 
