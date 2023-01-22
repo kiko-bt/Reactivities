@@ -47,7 +47,7 @@ namespace API.Extensions
                         }
                     };
                 });
-
+                
             services.AddAuthorization(opt =>
             {
                 opt.AddPolicy("IsActivityHost", policy =>
