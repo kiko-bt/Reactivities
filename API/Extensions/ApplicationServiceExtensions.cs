@@ -6,6 +6,7 @@ using Application.Activities;
 using Application.Interfaces;
 using Infrastructure.Security;
 using Infrastructure.Photos;
+using Infrastructure.Email;
 
 namespace API.Extensions
 {
@@ -24,8 +25,9 @@ namespace API.Extensions
                 {
                     policy
                         .AllowAnyMethod()
-                        .AllowAnyHeader()
+                        .AllowAnyHeader()                                                               
                         .AllowCredentials()
+                        .WithExposedHeaders("WWW-Authenticate", "Pagination")
                         .WithOrigins("http://localhost:3000", "https://localhost:3000");
                 });
             });
@@ -33,6 +35,7 @@ namespace API.Extensions
             services.AddAutoMapper(typeof(MappingProfiles).Assembly);
             services.AddScoped<IUserAccessor, UserAccessor>();
             services.AddScoped<IPhotoAccessor, PhotoAccessor>();
+            services.AddScoped<SendEmail>();
             services.Configure<CloudinarySettings>(config.GetSection("Cloudinary"));
             services.AddSignalR();
 
