@@ -1,47 +1,63 @@
-using API.SignalR;
-using Domain;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Persistence;
+using Application.Activities;
 
-namespace API
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddControllers(options =>
 {
-    public class Program
-    {
-        public static async Task Main(string[] args)
-        {
-            var host = CreateHostBuilder(args).Build();
-            using var scope = host.Services.CreateScope();
+    var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
+    options.Filters.Add(new AuthorizeFilter(policy));
 
-            var builder = WebApplication.CreateBuilder(args);
-            var app = builder.Build();
+}).AddFluentValidation(config =>
+{
+    config.RegisterValidatorsFromAssemblyContaining<Create>();
+});
+builder.Services.AddApplicationServices(builder.Configuration);
+builder.Services.AddIdentityService(builder.Configuration);
 
-            var services = scope.ServiceProvider;
+var app = builder.Build();
 
-            try
-            {
-                var context = services.GetRequiredService<DataContext>();
-                var userManager = services.GetRequiredService<UserManager<AppUser>>();
-                await context.Database.MigrateAsync();
+app.UseMiddleware<ExceptionMiddleware>();
 
-                await Seed.SeedData(context, userManager);
-            }
-            catch (Exception ex)
-            {
-                var logger = services.GetRequiredService<ILogger<Program>>();
-                logger.LogError(ex, "An error occured during migration");
-            }
-            finally
-            {
-                await host.RunAsync();
-            }
-        }
-
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.UseStartup<Startup>();
-                });
-    }
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "WebAPIv5 v1"));
 }
+
+// app.UseHttpsRedirection(); -- not using for development
+
+app.UseDefaultFiles();
+app.UseStaticFiles();
+
+app.UseCors("CorsPolicy");
+
+app.UseAuthentication();
+
+app.UseAuthorization();
+
+app.MapControllers();
+app.MapHub<ChatHub>("/chatHub");
+app.MapFallbackToController("Index", "Fallback");
+
+using var scope = app.Services.CreateScope();
+
+var services = scope.ServiceProvider;
+
+try
+{
+    var context = services.GetRequiredService<DataContext>();
+    var userManager = services.GetRequiredService<UserManager<AppUser>>();
+    await context.Database.MigrateAsync();
+
+    await Seed.SeedData(context, userManager);
+}
+catch (Exception ex)
+{
+    var logger = services.GetRequiredService<ILogger<Program>>();
+    logger.LogError(ex, "An error occured during migration");
+}
+finally
+{
+    await app.RunAsync();
+}
+
