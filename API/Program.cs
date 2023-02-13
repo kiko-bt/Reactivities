@@ -6,11 +6,8 @@ builder.Services.AddControllers(options =>
 {
     var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
     options.Filters.Add(new AuthorizeFilter(policy));
-
-}).AddFluentValidation(config =>
-{
-    config.RegisterValidatorsFromAssemblyContaining<Create>();
 });
+
 builder.Services.AddApplicationServices(builder.Configuration);
 builder.Services.AddIdentityService(builder.Configuration);
 

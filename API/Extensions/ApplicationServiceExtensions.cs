@@ -1,12 +1,11 @@
 ﻿using Application.Core;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
-using Persistence;
 using Application.Activities;
 using Application.Interfaces;
 using Infrastructure.Security;
 using Infrastructure.Photos;
 using Infrastructure.Email;
+using FluentValidation;
 
 namespace API.Extensions
 {
@@ -38,6 +37,8 @@ namespace API.Extensions
             services.AddScoped<SendEmail>();
             services.Configure<CloudinarySettings>(config.GetSection("Cloudinary"));
             services.AddSignalR();
+            services.AddFluentValidationAutoValidation();
+            services.AddValidatorsFromAssemblyContaining<Create>();
 
 
             return services;
